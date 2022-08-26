@@ -5,10 +5,11 @@
 CREATE TABLE suppliers (
     supplier_id NUMBER,
     supplier_name VARCHAR2(200) CONSTRAINT suppliers_supp_name_nn NOT NULL,
-    supplier_address VARCHAR2(250),
+    supplier_address VARCHAR2(500),
     supplier_number VARCHAR2(100) CONSTRAINT suppliers_supp_number_nn NOT NULL,
     sa_rep_name VARCHAR2(100),
     sa_rep_number VARCHAR2(100),
+    remarks VARCHAR2(500)
     created_by VARCHAR2(100),
     created_date DATE,
     updated_by VARCHAR2(100),
@@ -20,6 +21,7 @@ CREATE TABLE suppliers (
 CREATE TABLE categories (
     category_id NUMBER,
     category_name VARCHAR2(100) CONSTRAINT categories_ctgy_name_nn NOT NULL,
+    category_desc VARCHAR2(500),
     category_status CHAR(1) DEFAULT 'Y',
     created_by VARCHAR2(100),
     created_date DATE,
@@ -46,6 +48,7 @@ CREATE TABLE products (
 CREATE TABLE uoms (
     uom_id NUMBER,
     uom_name VARCHAR2(100) CONSTRAINT uom_uom_name_nn NOT NULL,
+    uom_desc VARCHAR2(500),
     uom_status CHAR DEFAULT 'Y',
     created_by VARCHAR2(100),
     created_date DATE,
@@ -58,6 +61,7 @@ CREATE TABLE uoms (
 CREATE TABLE brands (
     brand_id NUMBER,
     brand_name VARCHAR2(100) CONSTRAINT brands_brand_name_nn NOT NULL,
+    brand_desc VARCHAR2(500),
     brand_status CHAR DEFAULT 'Y',
     created_by VARCHAR2(100),
     created_date DATE,
@@ -72,7 +76,7 @@ CREATE TABLE product_details (
     product_id NUMBER CONSTRAINT product_dtls_prod_id_nn NOT NULL,
     brand_id NUMBER CONSTRAINT product_dtls_brand_id_nn NOT NULL,
     style_size VARCHAR2(100),
-    barcode NUMBER CONSTRAINT product_dtls_barcode_nn NOT NULL,
+    barcode VARCHAR2(20) CONSTRAINT product_dtls_barcode_nn NOT NULL,
     purchase_price NUMBER CONSTRAINT product_dtls_pur_price_nn NOT NULL,
     sale_price NUMBER CONSTRAINT product_dtls_sal_price_nn NOT NULL,
     vat NUMBER,
