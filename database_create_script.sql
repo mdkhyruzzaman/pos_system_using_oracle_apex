@@ -9,8 +9,8 @@ CREATE TABLE suppliers (
     supplier_number VARCHAR2(100) CONSTRAINT suppliers_supp_number_nn NOT NULL,
     sa_rep_name VARCHAR2(100),
     sa_rep_number VARCHAR2(100),
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT suppliers_supp_name_uq UNIQUE(supplier_name),
@@ -20,9 +20,9 @@ CREATE TABLE suppliers (
 CREATE TABLE categories (
     category_id NUMBER,
     category_name VARCHAR2(100) CONSTRAINT categories_ctgy_name_nn NOT NULL,
-    category_status CHAR(1) DEFAULT 'A',
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    category_status CHAR(1) DEFAULT 'Y',
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT categories_ctgy_id_pk PRIMARY KEY(category_id),
@@ -33,9 +33,9 @@ CREATE TABLE products (
     product_id NUMBER,
     product_name VARCHAR2(100) CONSTRAINT products_prod_name_nn NOT NULL,
     category_id NUMBER CONSTRAINT products_ctgy_id_nn NOT NULL,
-    product_status CHAR(1) DEFAULT 'A',
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    product_status CHAR(1) DEFAULT 'Y',
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT products_prod_name_uq UNIQUE(product_name),
@@ -43,11 +43,12 @@ CREATE TABLE products (
     CONSTRAINT products_ctgy_id_fk FOREIGN KEY(category_id) REFERENCES categories(category_id)
 );
 
-CREATE TABLE uom (
+CREATE TABLE uoms (
     uom_id NUMBER,
     uom_name VARCHAR2(100) CONSTRAINT uom_uom_name_nn NOT NULL,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    uom_status CHAR DEFAULT 'Y',
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT uom_uom_name_uq UNIQUE(uom_name),
@@ -57,8 +58,9 @@ CREATE TABLE uom (
 CREATE TABLE brands (
     brand_id NUMBER,
     brand_name VARCHAR2(100) CONSTRAINT brands_brand_name_nn NOT NULL,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    brand_status CHAR DEFAULT 'Y',
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT brands_brand_name_uq UNIQUE(brand_name),
@@ -66,7 +68,7 @@ CREATE TABLE brands (
 );
 
 CREATE TABLE product_details (
-    product_detail_id NUMBER,
+    pdetails_id NUMBER,
     product_id NUMBER CONSTRAINT product_dtls_prod_id_nn NOT NULL,
     brand_id NUMBER CONSTRAINT product_dtls_brand_id_nn NOT NULL,
     style_size VARCHAR2(100),
@@ -79,17 +81,17 @@ CREATE TABLE product_details (
     cartoon_size NUMBER,
     uom_id NUMBER,
     Weight_fraction CHAR(1) DEFAULT 'N',
-    prod_dtl_status CHAR(1) DEFAULT 'A',
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    prod_dtl_status CHAR(1) DEFAULT 'Y',
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT product_dtls_prod_style UNIQUE(product_id, style_size),
     CONSTRAINT product_dtls_barcode UNIQUE(barcode),
-    CONSTRAINT product_dtls_id_pk PRIMARY KEY(product_detail_id),
+    CONSTRAINT product_dtls_id_pk PRIMARY KEY(pdetails_id),
     CONSTRAINT product_dtls_prod_id_fk FOREIGN KEY(product_id) REFERENCES products(product_id),
     CONSTRAINT product_dtls_brand_id_fk FOREIGN KEY(brand_id) REFERENCES brands(brand_id),
-    CONSTRAINT product_dtls_uom_id_fk FOREIGN KEY(uom_id) REFERENCES uom(uom_id)
+    CONSTRAINT product_dtls_uom_id_fk FOREIGN KEY(uom_id) REFERENCES uoms(uom_id)
 );
 
 CREATE TABLE customers (
@@ -99,9 +101,9 @@ CREATE TABLE customers (
     customer_number VARCHAR2(100) CONSTRAINT customers_cus_num_nn NOT NULL,
     customer_email VARCHAR2(100),
     remarks VARCHAR2(200),
-    customer_status CHAR(1) DEFAULT 'A',
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    customer_status CHAR(1) DEFAULT 'Y',
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT customers_cus_number_uq UNIQUE(customer_number),
@@ -116,9 +118,9 @@ CREATE TABLE payment_methods (
     payment_id NUMBER,
     method_name VARCHAR2(100) CONSTRAINT pay_methods_meth_name_nn NOT NULL,
     method_details VARCHAR2(200),
-    method_status CHAR(1) DEFAULT 'A',
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    method_status CHAR(1) DEFAULT 'Y',
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT pay_methods_meth_name_uq UNIQUE(method_name),
@@ -141,8 +143,8 @@ CREATE TABLE purchases (
     paid_status CHAR(1) DEFAULT 'P',
     paid_date DATE,
     remarks VARCHAR2(200),
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT purchases_pur_id_pk PRIMARY KEY(purchase_id),
@@ -151,45 +153,45 @@ CREATE TABLE purchases (
 
 CREATE TABLE purchase_details (
     purchase_id NUMBER,
-    product_detail_id NUMBER,
+    pdetails_id NUMBER,
     product_qty NUMBER,
     purchase_price NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
-    CONSTRAINT purchase_dtl_pk PRIMARY KEY(purchase_id, product_detail_id),
+    CONSTRAINT purchase_dtl_pk PRIMARY KEY(purchase_id, pdetails_id),
     CONSTRAINT purchase_dtl_pur_id_fk FOREIGN KEY(purchase_id) REFERENCES purchases(purchase_id),
-    CONSTRAINT purchase_dtl_prod_dtlid_fk FOREIGN KEY(product_detail_id) REFERENCES product_details(product_detail_id)
+    CONSTRAINT purchase_dtl_prod_dtlid_fk FOREIGN KEY(pdetails_id) REFERENCES product_details(pdetails_id)
 );
 
 
 -- PURCHASE PRODUCT RETURN TO SUPPLIERS --
 CREATE TABLE purchase_returns (
-    purchase_return_id NUMBER,
+    pur_return_id NUMBER,
     supplier_id NUMBER,
     return_date DATE,
     remarks VARCHAR2(200),
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
-    CONSTRAINT purchase_rtnid_pk PRIMARY KEY(purchase_return_id),
+    CONSTRAINT purchase_rtnid_pk PRIMARY KEY(pur_return_id),
     CONSTRAINT purchase_rtn_suppid_fk FOREIGN KEY(supplier_id) REFERENCES suppliers(supplier_id)
 );
 
 CREATE TABLE return_details (
-    purchase_return_id NUMBER,
-    product_detail_id NUMBER,
+    pur_return_id NUMBER,
+    pdetails_id NUMBER,
     product_qty NUMBER,
     purchase_price NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
-    CONSTRAINT return_dtl_pk PRIMARY KEY(purchase_return_id, product_detail_id),
-    CONSTRAINT return_dtl_purid_fk FOREIGN KEY(purchase_return_id) REFERENCES purchase_returns(purchase_return_id),
-    CONSTRAINT return_dtl_prodid_fk FOREIGN KEY(product_detail_id) REFERENCES product_details(product_detail_id)
+    CONSTRAINT return_dtl_pk PRIMARY KEY(pur_return_id, pdetails_id),
+    CONSTRAINT return_dtl_purid_fk FOREIGN KEY(pur_return_id) REFERENCES purchase_returns(pur_return_id),
+    CONSTRAINT return_dtl_prodid_fk FOREIGN KEY(pdetails_id) REFERENCES product_details(pdetails_id)
 );
 
 
@@ -201,8 +203,8 @@ CREATE TABLE sales (
     total_amount NUMBER,
     total_discount NUMBER,
     net_amount NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT sales_sal_id_pk PRIMARY KEY(sale_id),
@@ -211,24 +213,24 @@ CREATE TABLE sales (
 
 CREATE TABLE sale_details (
     sale_id NUMBER,
-    product_detail_id NUMBER,
+    pdetails_id NUMBER,
     product_qty NUMBER,
     sale_price NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
-    CONSTRAINT sale_dtl_pk PRIMARY KEY(sale_id, product_detail_id),
+    CONSTRAINT sale_dtl_pk PRIMARY KEY(sale_id, pdetails_id),
     CONSTRAINT sale_dtl_sal_id_fk FOREIGN KEY(sale_id) REFERENCES sales(sale_id),
-    CONSTRAINT sale_dtl_proddtl_id_fk FOREIGN KEY(product_detail_id) REFERENCES product_details(product_detail_id)
+    CONSTRAINT sale_dtl_proddtl_id_fk FOREIGN KEY(pdetails_id) REFERENCES product_details(pdetails_id)
 );
 
 CREATE TABLE payment_details(
     payment_id NUMBER,
     sale_id NUMBER,
     pay_amount NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT payment_datils_pk PRIMARY KEY(payment_id, sale_id),
@@ -243,8 +245,8 @@ CREATE TABLE sale_exchanges (
     old_sale_id NUMBER,
     new_sale_id NUMBER,
     total_amount NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT sale_exch_id_pk PRIMARY KEY(sale_exchange_id),
@@ -254,15 +256,15 @@ CREATE TABLE sale_exchanges (
 
 CREATE TABLE exchange_details (
     sale_exchange_id NUMBER,
-    product_detail_id NUMBER,
+    pdetails_id NUMBER,
     product_qty NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
-    CONSTRAINT exch_dtl_pk PRIMARY KEY(sale_exchange_id, product_detail_id),
+    CONSTRAINT exch_dtl_pk PRIMARY KEY(sale_exchange_id, pdetails_id),
     CONSTRAINT exch_dtl_salexchid_fk FOREIGN KEY(sale_exchange_id) REFERENCES sale_exchanges(sale_exchange_id),
-    CONSTRAINT exch_dtl_proddtlid_fk FOREIGN KEY(product_detail_id) REFERENCES product_details(product_detail_id)
+    CONSTRAINT exch_dtl_proddtlid_fk FOREIGN KEY(pdetails_id) REFERENCES product_details(pdetails_id)
 );
 
 
@@ -271,8 +273,8 @@ CREATE TABLE damage_products (
     damage_id NUMBER,
     damage_date DATE CONSTRAINT damage_damage_date_nn NOT NULL,
     total_lost_amount NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT damage_damage_id_pk PRIMARY KEY(damage_id)
@@ -280,16 +282,16 @@ CREATE TABLE damage_products (
 
 CREATE TABLE damage_details (
     damage_id NUMBER,
-    product_detail_id NUMBER,
+    pdetails_id NUMBER,
     avg_purchase_price NUMBER,
     product_qty NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
-    CONSTRAINT damage_dtl_dam_id_pd_id_pk PRIMARY KEY(damage_id, product_detail_id),
+    CONSTRAINT damage_dtl_dam_id_pd_id_pk PRIMARY KEY(damage_id, pdetails_id),
     CONSTRAINT damage_details_damage_id_fk FOREIGN KEY(damage_id) REFERENCES damage_products(damage_id),
-    CONSTRAINT damage_dtl_product_dtl_id_fk FOREIGN KEY(product_detail_id) REFERENCES product_details(product_detail_id) 
+    CONSTRAINT damage_dtl_product_dtl_id_fk FOREIGN KEY(pdetails_id) REFERENCES product_details(pdetails_id) 
 );
 
 
@@ -299,8 +301,8 @@ CREATE TABLE inventories (
     inventory_date DATE CONSTRAINT inventories_inv_date_nn NOT NULL,
     pre_total_amount NUMBER,
     new_total_amount NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
     CONSTRAINT inventories_inv_id_pk PRIMARY KEY(inventory_id)
@@ -308,14 +310,14 @@ CREATE TABLE inventories (
 
 CREATE TABLE inventories_details (
     inventory_id NUMBER,
-    product_detail_id NUMBER,
+    pdetails_id NUMBER,
     old_qty NUMBER,
     new_qty NUMBER,
-    inserted_by VARCHAR2(100),
-    inserted_date DATE,
+    created_by VARCHAR2(100),
+    created_date DATE,
     updated_by VARCHAR2(100),
     updated_date DATE,
-    CONSTRAINT inv_dtl_inv_id_prod_dtl_id_pk PRIMARY KEY(inventory_id, product_detail_id),
+    CONSTRAINT inv_dtl_inv_id_prod_dtl_id_pk PRIMARY KEY(inventory_id, pdetails_id),
     CONSTRAINT inv_dtl_inv_id_fk FOREIGN KEY(inventory_id) REFERENCES inventories(inventory_id),
-    CONSTRAINT inv_dtl_prod_dtl_id_fk FOREIGN KEY(product_detail_id) REFERENCES product_details(product_detail_id) 
+    CONSTRAINT inv_dtl_prod_dtl_id_fk FOREIGN KEY(pdetails_id) REFERENCES product_details(pdetails_id) 
 );
