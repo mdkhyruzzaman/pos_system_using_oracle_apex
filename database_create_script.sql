@@ -22,6 +22,7 @@ CREATE TABLE suppliers (
     phone_number        VARCHAR2(20) CONSTRAINT suppliers_supp_number_nn NOT NULL,
     supplier_email      VARCHAR2(100),
     remarks             VARCHAR2(500),
+	supplier_status		CHAR(1) DEFAULT 'Y',
     created_by          VARCHAR2(100),
     created_date        TIMESTAMP WITH TIME ZONE,
     updated_by          VARCHAR2(100),
@@ -100,6 +101,7 @@ CREATE TABLE brands (
 
 CREATE TABLE product_details (
     pdetails_id     NUMBER,
+    category_id     NUMBER CONSTRAINT prod_dtl_cat_id_nn NOT NULL,
     product_id      NUMBER CONSTRAINT product_dtls_prod_id_nn NOT NULL,
     brand_id        NUMBER CONSTRAINT product_dtls_brand_id_nn NOT NULL,
     style_size      VARCHAR2(100),
@@ -120,6 +122,7 @@ CREATE TABLE product_details (
     CONSTRAINT product_dtls_prod_style UNIQUE(product_id, style_size),
     CONSTRAINT product_dtls_barcode UNIQUE(barcode),
     CONSTRAINT product_dtls_id_pk PRIMARY KEY(pdetails_id),
+    CONSTRAINT prod_dtl_cat_id_pk FOREIGN KEY(category_id) REFERENCES categories(category_id),
     CONSTRAINT product_dtls_prod_id_fk FOREIGN KEY(product_id) REFERENCES products(product_id),
     CONSTRAINT product_dtls_brand_id_fk FOREIGN KEY(brand_id) REFERENCES brands(brand_id),
     CONSTRAINT product_dtls_uom_id_fk FOREIGN KEY(uom_id) REFERENCES uoms(uom_id)
@@ -165,19 +168,22 @@ CREATE TABLE payment_methods (
 
 -- PRODUCT PURCHASE FROM SUPPLIER --
 CREATE TABLE purchases (
-    purchase_id     NUMBER,
-    supplier_id     NUMBER,
-    purchase_date   TIMESTAMP WITH TIME ZONE CONSTRAINT purchases_pur_date NOT NULL,
-    total_amount    NUMBER,
-    total_commission NUMBER,
-    net_amount      NUMBER,
-    paid_status     CHAR(1) DEFAULT 'P',
-    paid_date       TIMESTAMP WITH TIME ZONE,
-    remarks         VARCHAR2(200),
-    created_by      VARCHAR2(100),
-    created_date    TIMESTAMP WITH TIME ZONE,
-    updated_by      VARCHAR2(100),
-    updated_date    TIMESTAMP WITH TIME ZONE,
+    purchase_id         NUMBER,
+    supplier_id         NUMBER,
+    purchase_date       TIMESTAMP WITH TIME ZONE CONSTRAINT purchases_pur_date NOT NULL,
+    total_amount        NUMBER,
+	total_comm_pct		NUMBER,
+    total_comm_amt      NUMBER,
+	total_vat_pct		NUMBER,
+    total_vat_amount    NUMBER,
+    net_amount          NUMBER,
+    paid_status         CHAR(1) DEFAULT 'P',
+    paid_date           TIMESTAMP WITH TIME ZONE,
+    remarks             VARCHAR2(200),
+    created_by          VARCHAR2(100),
+    created_date        TIMESTAMP WITH TIME ZONE,
+    updated_by          VARCHAR2(100),
+    updated_date        TIMESTAMP WITH TIME ZONE,
     CONSTRAINT purchases_pur_id_pk PRIMARY KEY(purchase_id),
     CONSTRAINT purchases_supp_id_fk FOREIGN KEY(supplier_id) REFERENCES suppliers(supplier_id)
 );
@@ -187,6 +193,7 @@ CREATE TABLE purchase_details (
     pdetails_id     NUMBER,
     product_qty     NUMBER,
     purchase_price  NUMBER,
+	product_total	NUMBER,
     seq_id          NUMBER,
     created_by      VARCHAR2(100),
     created_date    TIMESTAMP WITH TIME ZONE,
@@ -214,7 +221,7 @@ CREATE TABLE purchase_returns (
 
 CREATE TABLE return_details (
     pur_return_id   NUMBER,
-    pdetails_id        NUMBER,
+    pdetails_id		NUMBER,
     product_qty     NUMBER,
     purchase_price  NUMBER,
     created_by      VARCHAR2(100),
@@ -245,7 +252,7 @@ CREATE TABLE sales (
 
 CREATE TABLE sale_details (
     sale_id         NUMBER,
-    pdetails_id        NUMBER,
+    pdetails_id     NUMBER,
     product_qty     NUMBER,
     sale_price      NUMBER,
     created_by      VARCHAR2(100),
@@ -288,7 +295,7 @@ CREATE TABLE sale_exchanges (
 
 CREATE TABLE exchange_details (
     sale_exchange_id    NUMBER,
-    pdetails_id            NUMBER,
+    pdetails_id         NUMBER,
     product_qty         NUMBER,
     created_by          VARCHAR2(100),
     created_date        TIMESTAMP WITH TIME ZONE,
@@ -314,7 +321,7 @@ CREATE TABLE damage_products (
 
 CREATE TABLE damage_details (
     damage_id           NUMBER,
-    pdetails_id            NUMBER,
+    pdetails_id         NUMBER,
     avg_purchase_price  NUMBER,
     product_qty         NUMBER,
     created_by          VARCHAR2(100),
@@ -342,7 +349,7 @@ CREATE TABLE inventories (
 
 CREATE TABLE inventories_details (
     inventory_id    NUMBER,
-    pdetails_id        NUMBER,
+    pdetails_id     NUMBER,
     old_qty         NUMBER,
     new_qty         NUMBER,
     created_by      VARCHAR2(100),
